@@ -1,0 +1,79 @@
+How to connect android to localhost 
+
+
+1️⃣ First fix USB authorization
+
+Make sure:
+adb devices
+
+shows:
+device
+NOT unauthorized.
+
+2️⃣ Then build frontend
+npm run build
+
+3️⃣ Sync capacitor
+npx cap sync android
+
+4️⃣ Run app
+npx cap run android
+
+5️⃣ After it installs, THEN run:
+adb reverse tcp:5001 tcp:5001
+
+(You can run reverse before or after launching app — doesn’t matter — but device must be authorized.)
+
+Keep
+npm run dev 
+running.
+
+
+Keep 
+adb reverse tcp:5001 tcp:5001 
+already done (you did it ✅).
+
+Open your Android app.
+Play a lesson.
+If your phone is hitting your LOCAL backend, you will see:
+🔥 LOCAL BACKEND HIT - Activity Log 2026-02-15T...
+
+
+
+✅ Modify Your AndroidManifest.xml
+
+Change this:
+
+<application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme">
+
+
+To this 👇
+
+<application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:usesCleartextTraffic="true"     ---------> just need to add this line
+    android:theme="@style/AppTheme">
+
+
+
+And in queryClient.ts
+const LOCAL_API = "http://localhost:5001";
+const PROD_API = "https://app.drmeghana.com";
+
+export const API_BASE_URL = Capacitor.isNativePlatform()
+  ? LOCAL_API // 🔥 change to LOCAL when testing
+  : "";
+
+const fullUrl = Capacitor.isNativePlatform()
+  ? `${API_BASE_URL}/${cleanUrl}`
+  : `/${cleanUrl}`;
