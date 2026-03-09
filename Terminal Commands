@@ -1,0 +1,21 @@
+Terminal Commands 
+------------------
+
+
+1. Run this command to see what process is using port 5001:
+lsof -i :5001
+ ->
+COMMAND   PID             USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    49609 gauravshastrakar   28u  IPv4 0x31e77ba2b5fdd7b2      0t0  TCP *:commplex-link (LISTEN)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+2. kill -9 <PID>
+-9 = SIGKILL
+It tells the OS:
+Forcefully terminate this process immediately.
+kill -9 49609
+
+------------------------------------------------------------------------------------------------------------------------------
+
