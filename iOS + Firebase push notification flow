@@ -119,6 +119,38 @@ Wait until token arrives
 Then register device
 
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+Where to get the Listner ?
+---------------------------
+
+Listener is not something you download or create yourself. 
+You don’t get it anywhere — it is already provided by the plugin installed.
+
+This import -
+import { FirebaseMessaging } from "@capacitor-firebase/messaging";
+
+That package already contains the listener implementation.
+You only subscribe to it.
+
+
+Think of it like this:
+Capacitor Firebase Messaging Plugin
+        │
+        │ exposes events
+        ▼
+FirebaseMessaging.addListener(...)
+
+
+Where It Comes From
+--------------------
+It comes from this npm package:
+@capacitor-firebase/messaging
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
 
 
 
