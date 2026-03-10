@@ -1,0 +1,164 @@
+A Capacitor app is not converted into Swift/Kotlin, but it also is not purely React running directly on the phone. It’s a hybrid architecture.
+
+Let’s clarify exactly what happens.
+
+What Actually Runs on the Phone
+
+Your React app still runs as a web app, but inside a native container.
+
+Architecture:
+
+iOS / Android App (native container)
+        │
+        ▼
+WebView (browser inside the app)
+        │
+        ▼
+Your React App (HTML + JS + CSS)
+
+So your React code runs inside a WebView, not directly on the OS.
+
+Where Swift / Kotlin Are Used
+
+When you run:
+
+npx cap add ios
+npx cap add android
+
+Capacitor generates native wrapper projects.
+
+Structure looks like:
+
+project
+│
+├── src/              → React app
+├── ios/              → Swift native app
+└── android/          → Kotlin native app
+
+Those native apps:
+
+Launch a WebView
+
+Load your React bundle
+
+Provide native APIs through plugins
+
+How Native Features Work
+
+Your React code cannot directly access native APIs like:
+
+Push notifications
+
+Camera
+
+Filesystem
+
+Bluetooth
+
+So Capacitor provides plugins.
+
+Example:
+
+React Code
+    │
+    ▼
+Capacitor Bridge
+    │
+    ▼
+Native Plugin (Swift/Kotlin)
+    │
+    ▼
+OS Feature
+
+Example with push notifications:
+
+React
+   │
+   │ PushNotifications.register()
+   ▼
+Capacitor Bridge
+   │
+   ▼
+Swift/Kotlin Plugin
+   │
+   ▼
+APNs / Firebase SDK
+In Your Case (Push Notifications)
+
+Your code:
+
+PushNotifications.register()
+
+actually calls:
+
+React JS
+   │
+   ▼
+Capacitor Bridge
+   │
+   ▼
+Native Push Plugin
+   │
+   ▼
+iOS APNs / Android FCM
+
+Then the plugin sends events back to JS.
+
+Why the Listener Exists
+
+When Firebase generates a token, the native plugin receives it first.
+
+Then it emits an event to your JS code:
+
+Native Firebase SDK
+        │
+        ▼
+Capacitor Plugin
+        │
+        ▼
+JS Event → FirebaseMessaging.addListener(...)
+
+So your React code can react to it.
+
+Important Difference
+
+Capacitor apps are hybrid apps, not compiled native apps.
+
+Technology	Runs JS?	Native APIs
+React Web	Yes	No
+Capacitor	Yes (WebView)	Yes (via plugins)
+React Native	No WebView	Native components
+Swift/Kotlin	No JS	Fully native
+
+So your app is:
+
+React + WebView + Native Plugins
+Simple Mental Model
+
+Think of Capacitor like this:
+
+Native App Shell
+      │
+      ▼
+Mini Browser (WebView)
+      │
+      ▼
+Your React App
+
+And plugins are bridges to the phone hardware.
+
+Why This Matters For Your Push Issue
+
+Push notifications are 100% native OS features.
+
+So the flow is:
+
+Firebase SDK (native)
+        │
+        ▼
+Capacitor Plugin
+        │
+        ▼
+JS Listener in React
+
+Which is why you must listen for token events.
