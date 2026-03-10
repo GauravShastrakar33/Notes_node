@@ -2,44 +2,122 @@ iOS + Firebase push notification flow
 --------------------------------------
 
 
-Step 1 — App requests notification permission
-----------------------------------------------
-The app asks the user:   Allow notifications?
-If the user allows → iOS registers the device with APNs (Apple Push Notification Service).
+📱 Complete Push Notification Flow (iOS + Firebase)
+
+┌─────────────────────────────┐
+│        iPhone App           │
+│   (Firebase SDK installed)  │
+└──────────────┬──────────────┘
+               │
+               │ App Launch
+               ▼
+        Ask Notification Permission
+               │
+               ▼
+        iOS registers device
+               │
+               ▼
+┌─────────────────────────────┐
+│             iOS             │
+└──────────────┬──────────────┘
+               │
+               │ Register device for push
+               ▼
+        Apple Push Notification Service
+               │
+               ▼
+┌─────────────────────────────┐
+│             APNs            │
+│        (Apple Servers)      │
+└──────────────┬──────────────┘
+               │
+               │ Returns APNs Device Token
+               ▼
+┌──────────────────────────────────────────┐
+│  iPhone App + Firebase SDK (frontend)    │
+│                                          │
+│   Firebase SDK receives APNs token       │
+│                                          │
+│   Sends APNs token to Firebase servers   │
+└──────────────┬───────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│   Firebase Cloud Messaging  │
+│        (Google Servers)     │
+└──────────────┬──────────────┘
+               │
+               │ Generates FCM Token
+               ▼
+┌──────────────────────────────────────────┐
+│   iPhone App (Firebase Listener Active)  │
+│                                          │
+│    Listener receives FCM token           │
+│                                          │
+│    App sends token to backend API        │
+└──────────────┬───────────────────────────┘
+               │
+               ▼
+        Backend Server
+               │
+               │ Save device token
+               ▼
+      Push Notifications Ready
+
+------------------------------------------------------------------------------------------------------------------------------------
 
 
-Step 2 — iOS returns APNs Device Token
+🚀 When Backend Sends a Notification
+-------------------------------------
+
+Once the token is stored, the sending path looks like this:
+
+Backend
+   │
+   │ send notification using FCM token
+   ▼
+Firebase Cloud Messaging
+   │
+   │ routes message to APNs
+   ▼
+Apple Push Notification Service
+   │
+   ▼
+iPhone Device
+   │
+   ▼
+Notification Appears
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+🧠 Key Insight (Important for Your Bug)
 ----------------------------------------
-Apple sends back a device token to the app.
-Example:
-f83b2e9c2cbb7a....
-This token identifies the physical iPhone.
 
-Step 3 — Firebase generates FCM Token
-----------------------------------------
-Firebase takes that APNs token and creates an FCM token.
-Example:
-fcm_abc123xyz
-This is the token your backend will use.
+The listener is critical because this step can be delayed:
+    --------
 
-Step 4 — App sends token to backend
-----------------------------------------
-The app must call the API:
-POST /api/v1/notifications/register-device
-Example payload:
-{
-  userId: 123,
-  token: "fcm_abc123xyz",
-  platform: "ios"
-}
-Now the backend stores this token.
+Firebase SDK
+     │
+     │ sends APNs token to Firebase
+     ▼
+Firebase generates FCM token
 
-Step 5 — Backend sends notification
-----------------------------------------
-When something happens (message, course update, etc):
-Backend calls Firebase:
-Send push → token: fcm_abc123xyz
-Firebase → APNs → iPhone → Notification appears.
+Sometimes this takes a few seconds.
+
+If the app only does:
+
+getToken()
+
+once and the token is not ready → you get null → registration fails.
+
+That’s why the correct approach is:
+
+Start listener
+Wait until token arrives
+Then register device
+
 
 
 
