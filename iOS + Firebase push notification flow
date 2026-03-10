@@ -1,0 +1,47 @@
+iOS + Firebase push notification flow
+--------------------------------------
+
+
+Step 1 — App requests notification permission
+----------------------------------------------
+The app asks the user:   Allow notifications?
+If the user allows → iOS registers the device with APNs (Apple Push Notification Service).
+
+
+Step 2 — iOS returns APNs Device Token
+----------------------------------------
+Apple sends back a device token to the app.
+Example:
+f83b2e9c2cbb7a....
+This token identifies the physical iPhone.
+
+Step 3 — Firebase generates FCM Token
+----------------------------------------
+Firebase takes that APNs token and creates an FCM token.
+Example:
+fcm_abc123xyz
+This is the token your backend will use.
+
+Step 4 — App sends token to backend
+----------------------------------------
+The app must call the API:
+POST /api/v1/notifications/register-device
+Example payload:
+{
+  userId: 123,
+  token: "fcm_abc123xyz",
+  platform: "ios"
+}
+Now the backend stores this token.
+
+Step 5 — Backend sends notification
+----------------------------------------
+When something happens (message, course update, etc):
+Backend calls Firebase:
+Send push → token: fcm_abc123xyz
+Firebase → APNs → iPhone → Notification appears.
+
+
+
+
+
