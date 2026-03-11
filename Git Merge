@@ -1,0 +1,18 @@
+git add .
+git commit -m "Current changes save"
+
+git pull - new brach and new push on the repo are taken to local 
+
+from the current brach 
+target eg . feat/capacitor-goldmine-auditlog
+i want to merge the new branch 
+so from current branch i will do 
+git merge feat/bugs-vg-v2
+
+
+
+if conflict arises - after merge 
+the changes are in local repo, so we need to push it to remote 
+git . 
+git commit 
+git push 
