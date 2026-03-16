@@ -1,0 +1,43 @@
+Digital Personal Data Protection Act, 2023
+--------------------------------------------
+
+
+Data Fiduciary - The entity that controls and processes users' personal data.
+
+Data Principals - Users whose data is collected are called
+
+A Data Processor - is someone who processes data on behalf of the Data Fiduciary.
+Example:
+Cloud provider storing your user data
+Analytics services
+
+A Consent Manager - is a trusted platform or entity that helps users give, manage, review, or withdraw consent for their personal data.
+Think of it like a middle layer between the user and companies using their data.
+👉 It ensures that users stay in control of their data permissions.
+
+flow:
+User → Consent Manager → App / Company
+---------------------------------------
+1.User gives permission through a Consent Manager platform
+2.The Consent Manager records the consent
+3.Your app (Data Fiduciary) receives permission to use the data
+4.User can withdraw consent anytime through the Consent Manager
+
+
+Important Thing for Your App
+-----------------------------
+
+If you run an app or website, you usually DO NOT need to become a Consent Manager.
+
+You only need to:
+1.Take clear user consent
+2.Store consent logs
+3.Allow withdrawal of consent
+4.Show privacy policy
+
+So your role is:
+Role	                                 In Your App
+User	                               Data Principal
+Your app/company	                   Data Fiduciary
+Cloud provider/analytics	           Data Processor
+Consent Manager	                     Usually external platform (optional)
