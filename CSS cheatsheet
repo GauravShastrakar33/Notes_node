@@ -3,3 +3,8 @@ CSS Cheatsheet
 
 
 Complete circle - border-radius : 50%
+
+
+box-sizing : border-box;
+you can apply the padding and margin and things stay inside the box.
+
